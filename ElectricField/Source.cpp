@@ -2,26 +2,54 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
+#include <fstream>
+#include "INI_Reader.h"
 
 int main()
 {
-	srand(100);
+	srand(300);
 
-	int width = 1200;
-	int height = 800;
-	int count = 10;
+	const std::string baseConfigGroup = "Config";
+	INI_Reader config("config.ini");
 
-	const int constK = 100;
+	int minSpeed = 1;
+	int maxSpeed = 5;
+	int width = 640;
+	int height = 480;
+	int count = 1024;
+	int constK = 100;
+	float toppercent = 0.1;
+	float botpercent = 0;
+
+	try
+	{
+		width = std::stoi(config.getValue(baseConfigGroup, "Width"));
+		height = std::stoi(config.getValue(baseConfigGroup, "Height"));
+		count = std::stoi(config.getValue(baseConfigGroup, "NumberOfCharges"));
+		constK = std::stoi(config.getValue(baseConfigGroup, "ConstK"));
+		toppercent = std::stof(config.getValue(baseConfigGroup, "TopPercent"));
+		botpercent = std::stof(config.getValue(baseConfigGroup, "BotPercent"));
+	}
+	catch (std::invalid_argument exception) {}
+
+
 	int pixelArraySize = width * height;
-
 	float* forceInPixels = new float[pixelArraySize];
 	int* x = new int[count];
 	int* y = new int[count];
+	int* velocityX = new int[count];
+	int* velocityY = new int[count];
 
 	for (int i = 0; i < count; i++)
 	{
 		x[i] = rand() % width;
 		y[i] = rand() % height;
+		velocityX[i] = rand() % (maxSpeed - minSpeed) + minSpeed;
+		velocityY[i] = rand() % (maxSpeed - minSpeed) + minSpeed;
+		if (rand() % 2 == 0)
+			velocityX[i] = -velocityX[i];
+		if (rand() % 2 == 0)
+			velocityY[i] = -velocityY[i];
 	}
 
 	sf::RenderWindow window;
@@ -35,14 +63,49 @@ int main()
 	sf::Clock clock;
 	int fps = 0;
 
+	//float maxForce = 100 * (constK / 0.01);
+
 	while (window.isOpen())
 	{
-		if (clock.getElapsedTime().asSeconds() >= 1)
+		//std::cout << sf::Mouse::getPosition(window).x << " " << sf::Mouse::getPosition(window).y << std::endl;
+		if (clock.getElapsedTime().asSeconds() >= 25)
 		{
 			std::cout << fps << std::endl;
 			fps = 0;
 			clock.restart();
 		}
+		/*for (int i = 0; i < count; i++)
+		{
+			if (x[i] + velocityX[i] < 0)
+			{
+				x[i] = 0;
+				velocityX[i] = -velocityX[i];
+			}
+			else if (x[i] + velocityX[i] >= width)
+			{
+				x[i] = width - 1;
+				velocityX[i] = -velocityX[i];
+			}
+			else
+			{
+				x[i] += velocityX[i];
+			}
+
+			if (y[i] + velocityY[i] < 0)
+			{
+				y[i] = 0;
+				velocityY[i] = -velocityY[i];
+			}
+			else if (y[i] + velocityY[i] >= height)
+			{
+				y[i] = height - 1;
+				velocityY[i] = -velocityY[i];
+			}
+			else
+			{
+				y[i] += velocityY[i];
+			}
+		}*/
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -66,8 +129,8 @@ int main()
 				float xUnit = dx / magnitude;
 				float yUnit = dy / magnitude;
 
-				forceX += xUnit * chargefm;
-				forceY += yUnit * chargefm;
+				forceX += abs(xUnit * chargefm);
+				forceY += abs(yUnit * chargefm);
 			}
 
 			forceInPixels[dim] = sqrtf(forceX * forceX + forceY * forceY);
@@ -81,8 +144,6 @@ int main()
 		}
 
 		int differentColors = 1149;
-		float toppercent = 0.5;
-		float botpercent = 0;
 		float top = (1 - toppercent) * maxForce;
 		float bot = botpercent * maxForce;
 
