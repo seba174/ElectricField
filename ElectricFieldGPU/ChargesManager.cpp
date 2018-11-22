@@ -2,13 +2,40 @@
 #include "ChargesManager.h"
 
 
-ChargesManager::ChargesManager(int numberOfCharges, int width, int height)
-	:numberOfCharges(numberOfCharges), screenWidth(width), screenHeight(height)
+void ChargesManager::CleanUp()
+{
+	if (xCoordinate != nullptr)
+		delete[] xCoordinate;
+	if (yCoordinate != nullptr)
+		delete[] yCoordinate;
+	if (xVelocity != nullptr)
+		delete[] xVelocity;
+	if (yVelocity != nullptr)
+		delete[] yVelocity;
+}
+
+void ChargesManager::Init()
 {
 	xCoordinate = new int[numberOfCharges];
 	yCoordinate = new int[numberOfCharges];
 	xVelocity = new int[numberOfCharges];
 	yVelocity = new int[numberOfCharges];
+}
+
+ChargesManager::ChargesManager(int numberOfCharges, int width, int height)
+	:numberOfCharges(numberOfCharges), screenWidth(width), screenHeight(height)
+{
+	Init();
+}
+
+void ChargesManager::UpdateSize(int numberOfCharges, int width, int height)
+{
+	screenWidth = width;
+	screenHeight = height;
+	this->numberOfCharges = numberOfCharges;
+
+	CleanUp();
+	Init();
 }
 
 void ChargesManager::SetRandomPositions()
@@ -110,12 +137,5 @@ int ChargesManager::GetNumberOfCharges() const
 
 ChargesManager::~ChargesManager()
 {
-	if (xCoordinate != nullptr)
-		delete[] xCoordinate;
-	if (yCoordinate != nullptr)
-		delete[] yCoordinate;
-	if (xVelocity != nullptr)
-		delete[] xVelocity;
-	if (yVelocity != nullptr)
-		delete[] yVelocity;
+	CleanUp();
 }

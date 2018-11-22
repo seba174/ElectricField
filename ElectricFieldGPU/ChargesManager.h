@@ -12,8 +12,13 @@ private:
 	int* xVelocity;
 	int* yVelocity;
 
+	void CleanUp();
+	void Init();
+
 public:
 	ChargesManager(int numberOfCharges, int width, int height);
+
+	void UpdateSize(int numberOfCharges, int width, int height);
 
 	void SetRandomPositions();
 

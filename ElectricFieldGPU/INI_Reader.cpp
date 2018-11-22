@@ -28,9 +28,9 @@ INI_Reader::INI_Reader(const string& filePath)
 	{
 		if (!line.empty())
 		{
-			int beg = line.find('[');
-			int end = line.find(']');
-			int tmp = line.find('%');
+			size_t beg = line.find('[');
+			size_t end = line.find(']');
+			size_t tmp = line.find('%');
 			if (beg != string::npos && end != string::npos)
 			{
 				// SettingGroup must have a form [*], where * is at least 1 character
@@ -49,8 +49,7 @@ INI_Reader::INI_Reader(const string& filePath)
 			{
 				vector<SettingGroup>::iterator it = settings.groups.begin();
 				std::advance(it, numberOfSettingGroups - 1);
-				int mid;
-				mid = line.find('=');
+				size_t mid = line.find('=');
 
 				// after '=' there must be at least 1 character
 				if (mid != string::npos && mid != line.size() - 1)

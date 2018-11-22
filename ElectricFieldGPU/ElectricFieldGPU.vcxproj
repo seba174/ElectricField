@@ -99,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="ChargesManager.cpp" />
     <ClCompile Include="ConfigLoader.cpp" />
+    <ClCompile Include="CPUElectricFieldCalculator.cpp" />
     <ClCompile Include="ElectricFieldImageCreator.cpp" />
     <ClCompile Include="GPUElectricFieldCalculator.cpp" />
     <ClCompile Include="INI_Reader.cpp" />
@@ -107,6 +108,7 @@
   <ItemGroup>
     <ClInclude Include="ChargesManager.h" />
     <ClInclude Include="ConfigLoader.h" />
+    <ClInclude Include="CPUElectricFieldCalculator.h" />
     <ClInclude Include="ElectricFieldCalculatorKernel.h" />
     <ClInclude Include="ElectricFieldImageCreator.h" />
     <ClInclude Include="GPUElectricFieldCalculator.h" />

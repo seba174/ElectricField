@@ -3,7 +3,7 @@
 #include "cuda_runtime.h"
 
 
-GPUElectricFieldCalculator::GPUElectricFieldCalculator(const ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier)
+GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier)
 	:chargesManager(chargesManager), blockSize(blockSize), baseElectricForceMultiplier(baseElectricForceMultiplier)
 {
 	electricFieldValues_device = 0;
@@ -40,10 +40,18 @@ bool GPUElectricFieldCalculator::CreateDeviceElectricFieldMatrix(int width, int 
 
 bool GPUElectricFieldCalculator::CreateDeviceChargesArrays()
 {
+	if (xCoordinates_device != nullptr)
+		cudaFree(xCoordinates_device);
+	xCoordinates_device = nullptr;
+
 	cudaError_t cudaStatus = cudaMalloc((void**)(&xCoordinates_device), chargesManager.GetXCoordinatesSize());
 	if (cudaStatus != cudaSuccess) {
 		return false;
 	}
+
+	if (yCoordinates_device != nullptr)
+		cudaFree(yCoordinates_device);
+	yCoordinates_device = nullptr;
 
 	cudaStatus = cudaMalloc((void**)(&yCoordinates_device), chargesManager.GetYCoordinatesSize());
 	if (cudaStatus != cudaSuccess) {

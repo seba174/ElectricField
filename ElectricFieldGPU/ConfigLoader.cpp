@@ -2,8 +2,21 @@
 
 
 ConfigLoader::ConfigLoader(const std::string& fileName)
-	:configLoader(fileName)
+	:configLoader(fileName), fileName(fileName)
 {
+}
+
+void ConfigLoader::LoadConfig()
+{
+	configLoader = INI_Reader(fileName);
+	minSpeed = GetMinVelocity();
+	maxSpeed = GetMaxVelocity();
+	width = GetWidth();
+	height = GetHeight();
+	numberOfCharges = GetNumberOfCharges();
+	electricForceCoefficient = GetElectricForceCoefficient();
+	blockSize = GetBlockSize();
+	isGpuModeEnabled = GetGpuModeEnabled();
 }
 
 int ConfigLoader::GetWidth() const
@@ -108,5 +121,20 @@ int ConfigLoader::GetMaxVelocity() const
 	catch (...)
 	{
 		return DefaultMaxVelocity;
+	}
+}
+
+bool ConfigLoader::GetGpuModeEnabled() const
+{
+	std::string isGpuModeEnabled = configLoader.getValue(GroupName, GpuModeEnabled);
+	if (isGpuModeEnabled.empty())
+		return DefaultGpuModeEnabled;
+	try
+	{
+		return std::stoi(isGpuModeEnabled);
+	}
+	catch (...)
+	{
+		return DefaultGpuModeEnabled;
 	}
 }
