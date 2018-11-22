@@ -95,19 +95,20 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </CudaCompile>
-    <CudaCompile Include="kernel.cu">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <FileType>CppClass</FileType>
-    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChargesManager.cpp" />
+    <ClCompile Include="ConfigLoader.cpp" />
+    <ClCompile Include="ElectricFieldImageCreator.cpp" />
     <ClCompile Include="GPUElectricFieldCalculator.cpp" />
     <ClCompile Include="INI_Reader.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChargesManager.h" />
+    <ClInclude Include="ConfigLoader.h" />
     <ClInclude Include="ElectricFieldCalculatorKernel.h" />
+    <ClInclude Include="ElectricFieldImageCreator.h" />
     <ClInclude Include="GPUElectricFieldCalculator.h" />
     <ClInclude Include="iniFileStructure.h" />
     <ClInclude Include="INI_Reader.h" />

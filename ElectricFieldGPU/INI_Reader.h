@@ -4,7 +4,6 @@
 
 class INI_Reader
 {
-	//SettingFile settings;
 	bool isEmpty;
 
 	SettingFile settings;

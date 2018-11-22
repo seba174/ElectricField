@@ -2,8 +2,8 @@
 #include "ChargesManager.h"
 
 
-ChargesManager::ChargesManager(int numberOfCharges)
-	:numberOfCharges(numberOfCharges)
+ChargesManager::ChargesManager(int numberOfCharges, int width, int height)
+	:numberOfCharges(numberOfCharges), screenWidth(width), screenHeight(height)
 {
 	xCoordinate = new int[numberOfCharges];
 	yCoordinate = new int[numberOfCharges];
@@ -20,7 +20,7 @@ void ChargesManager::SetRandomPositions()
 	}
 }
 
-void ChargesManager::SetRandomVelocities()
+void ChargesManager::SetRandomVelocities(int minVelocity, int maxVelocity)
 {
 	for (int i = 0; i < numberOfCharges; ++i)
 	{
@@ -69,6 +69,20 @@ void ChargesManager::UpdatePositions()
 	}
 }
 
+void ChargesManager::UpdateBounds(int newWidth, int newHeight)
+{
+	screenWidth = newWidth;
+	screenHeight = newHeight;
+
+	for (int i = 0; i < numberOfCharges; ++i)
+	{
+		if (xCoordinate[i] > screenWidth)
+			xCoordinate[i] = screenWidth - 1;
+		if (yCoordinate[i] > screenHeight)
+			yCoordinate[i] = screenHeight - 1;
+	}
+}
+
 int* ChargesManager::GetXCoordinates() const
 {
 	return xCoordinate;
@@ -76,7 +90,7 @@ int* ChargesManager::GetXCoordinates() const
 
 size_t ChargesManager::GetXCoordinatesSize() const
 {
-	return numberOfCharges * sizeof(*xCoordinate);
+	return numberOfCharges * sizeof(int);
 }
 
 int* ChargesManager::GetYCoordinates() const
@@ -86,10 +100,10 @@ int* ChargesManager::GetYCoordinates() const
 
 size_t ChargesManager::GetYCoordinatesSize() const
 {
-	return numberOfCharges * sizeof(*yCoordinate);
+	return numberOfCharges * sizeof(int);
 }
 
-int ChargesManager::GetNumberOfCharges()
+int ChargesManager::GetNumberOfCharges() const
 {
 	return numberOfCharges;
 }

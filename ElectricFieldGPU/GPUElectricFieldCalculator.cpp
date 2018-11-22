@@ -1,9 +1,10 @@
 #include "GPUElectricFieldCalculator.h"
 #include "ElectricFieldCalculatorKernel.h"
+#include "cuda_runtime.h"
 
 
-GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager chargesManager, int blockSize)
-	:chargesManager(chargesManager), blockSize(blockSize)
+GPUElectricFieldCalculator::GPUElectricFieldCalculator(const ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier)
+	:chargesManager(chargesManager), blockSize(blockSize), baseElectricForceMultiplier(baseElectricForceMultiplier)
 {
 	electricFieldValues_device = 0;
 	xCoordinates_device = 0;
@@ -12,7 +13,7 @@ GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager chargesMan
 
 bool GPUElectricFieldCalculator::SetDevice(int id)
 {
-	cudaError_t cudaStatus = cudaSetDevice(0);
+	cudaError_t cudaStatus = cudaSetDevice(id);
 	if (cudaStatus != cudaSuccess) {
 		return false;
 	}
@@ -25,7 +26,11 @@ bool GPUElectricFieldCalculator::CreateDeviceElectricFieldMatrix(int width, int 
 	this->width = width;
 	this->height = height;
 
-	cudaError_t cudaStatus = cudaMalloc((void**)&electricFieldValues_device, width * height * sizeof(*electricFieldValues_device));
+	if (electricFieldValues_device != nullptr)
+		cudaFree(electricFieldValues_device);
+	electricFieldValues_device = nullptr;
+
+	cudaError_t cudaStatus = cudaMalloc((void**)&electricFieldValues_device, width * height * sizeof(float));
 	if (cudaStatus != cudaSuccess) {
 		return false;
 	}
@@ -68,7 +73,7 @@ bool GPUElectricFieldCalculator::StartCalculatingElectricField()
 	int numberOfBlocks = ((width * height + blockSize - 1) / blockSize);
 
 	LaunchStartFieldCalculation(electricFieldValues_device, width * height, xCoordinates_device, yCoordinates_device,
-		chargesManager.GetNumberOfCharges(), 1, width, numberOfBlocks, blockSize);
+		chargesManager.GetNumberOfCharges(), baseElectricForceMultiplier, width, numberOfBlocks, blockSize);
 
 	cudaError_t cudaStatus = cudaGetLastError();
 	if (cudaStatus != cudaSuccess) {
@@ -85,8 +90,19 @@ bool GPUElectricFieldCalculator::SynchronizeDeviceAndCopyResult(float* electricF
 		return false;
 	}
 
-	cudaStatus = cudaMemcpy(electricFieldMatrix, electricFieldValues_device, width * height * sizeof(*electricFieldValues_device), cudaMemcpyDeviceToHost);
+	cudaStatus = cudaMemcpy(electricFieldMatrix, electricFieldValues_device, width * height * sizeof(float), cudaMemcpyDeviceToHost);
 	if (cudaStatus != cudaSuccess) {
 		return false;
 	}
+
+	return true;
+}
+
+GPUElectricFieldCalculator::~GPUElectricFieldCalculator()
+{
+	cudaDeviceReset();
+
+	cudaFree(electricFieldValues_device);
+	cudaFree(xCoordinates_device);
+	cudaFree(yCoordinates_device);
 }
