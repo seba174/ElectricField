@@ -26,7 +26,7 @@ int main()
 	float* electricFieldMatrix = new float[config.width * config.height];
 
 	ChargesManager chargesManager(config.numberOfCharges, config.width, config.height);
-	GPUElectricFieldCalculator gpuElectricFieldCalculator(chargesManager, config.blockSize, baseElectricForceMultiplier, config.maxChargesInOneThreadRun);
+	GPUElectricFieldCalculator gpuElectricFieldCalculator(chargesManager, config.blockSize, baseElectricForceMultiplier);
 	CPUElectricFieldCalculator cpuElectricFieldCalculator(chargesManager, config.width, config.height, baseElectricForceMultiplier);
 
 	chargesManager.SetRandomPositions();
@@ -74,7 +74,7 @@ int main()
 
 		if (config.isGpuModeEnabled)
 		{
-			if (!gpuElectricFieldCalculator.StartCalculatingElectricField())
+			if (!gpuElectricFieldCalculator.StartCalculatingElectricField(config.maxChargesInOneThreadRun))
 			{
 				CleanUp(electricFieldMatrix);
 				return 1;

@@ -17,7 +17,7 @@ private:
 
 public:
 
-	GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier, int maxChargesInOneThreadRun);
+	GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier);
 
 	bool SetDevice(int id);
 
@@ -27,7 +27,7 @@ public:
 
 	bool UpdateDeviceChargesArrays();
 
-	bool StartCalculatingElectricField();
+	bool StartCalculatingElectricField(int maxChargesInOneThreadRun);
 
 	bool SynchronizeDeviceAndCopyResult(float* electricFieldMatrix);
 

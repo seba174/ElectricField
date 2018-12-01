@@ -4,8 +4,8 @@
 #include <cmath>
 
 
-GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier, int maxChargesInOneThreadRun)
-	:chargesManager(chargesManager), blockSize(blockSize), baseElectricForceMultiplier(baseElectricForceMultiplier), maxChargesInOneThreadRun(maxChargesInOneThreadRun)
+GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier)
+	:chargesManager(chargesManager), blockSize(blockSize), baseElectricForceMultiplier(baseElectricForceMultiplier)
 {
 	electricFieldValues_device = 0;
 	xCoordinates_device = 0;
@@ -77,7 +77,7 @@ bool GPUElectricFieldCalculator::UpdateDeviceChargesArrays()
 	return true;
 }
 
-bool GPUElectricFieldCalculator::StartCalculatingElectricField()
+bool GPUElectricFieldCalculator::StartCalculatingElectricField(int maxChargesInOneThreadRun)
 {
 	cudaError_t cudaStatus = cudaMemset(electricFieldValues_device, 0, width * height * sizeof(float));
 	if (cudaStatus != cudaSuccess) {
