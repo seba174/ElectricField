@@ -1,10 +1,11 @@
 #include "GPUElectricFieldCalculator.h"
 #include "ElectricFieldCalculatorKernel.h"
 #include "cuda_runtime.h"
+#include <cmath>
 
 
-GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier)
-	:chargesManager(chargesManager), blockSize(blockSize), baseElectricForceMultiplier(baseElectricForceMultiplier)
+GPUElectricFieldCalculator::GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier, int maxChargesInOneThreadRun)
+	:chargesManager(chargesManager), blockSize(blockSize), baseElectricForceMultiplier(baseElectricForceMultiplier), maxChargesInOneThreadRun(maxChargesInOneThreadRun)
 {
 	electricFieldValues_device = 0;
 	xCoordinates_device = 0;
@@ -78,12 +79,18 @@ bool GPUElectricFieldCalculator::UpdateDeviceChargesArrays()
 
 bool GPUElectricFieldCalculator::StartCalculatingElectricField()
 {
-	int numberOfBlocks = ((width * height + blockSize - 1) / blockSize);
+	cudaError_t cudaStatus = cudaMemset(electricFieldValues_device, 0, width * height * sizeof(float));
+	if (cudaStatus != cudaSuccess) {
+		return false;
+	}
+
+	int numberOfBlocks = static_cast<int>((width * height + blockSize - 1) / blockSize) 
+		* ceil(chargesManager.GetNumberOfCharges() / static_cast<double>(maxChargesInOneThreadRun));
 
 	LaunchStartFieldCalculation(electricFieldValues_device, width * height, xCoordinates_device, yCoordinates_device,
-		chargesManager.GetNumberOfCharges(), baseElectricForceMultiplier, width, numberOfBlocks, blockSize);
+		chargesManager.GetNumberOfCharges(), maxChargesInOneThreadRun, baseElectricForceMultiplier, width, numberOfBlocks, blockSize);
 
-	cudaError_t cudaStatus = cudaGetLastError();
+	cudaStatus = cudaGetLastError();
 	if (cudaStatus != cudaSuccess) {
 		return false;
 	}

@@ -19,7 +19,7 @@ void CPUElectricFieldCalculator::CalculateElectricField(float * electricFieldMat
 {
 	int* x = chargesManager.GetXCoordinates();
 	int* y = chargesManager.GetYCoordinates();
-	for (int dim = 0; dim < width*height; ++dim)
+	for (int dim = 0; dim < width * height; ++dim)
 	{
 		int w = dim % width;
 		int h = dim / width;
@@ -28,7 +28,7 @@ void CPUElectricFieldCalculator::CalculateElectricField(float * electricFieldMat
 		{
 			int dx = w - x[k];
 			int dy = h - y[k];
-			float magnitude = sqrtf(dx * dx + dy * dy) + 0.01f;
+			float magnitude = sqrtf(static_cast<float>(dx * dx + dy * dy)) + 0.01f;
 			float chargefm = baseElectricForceMultiplier / magnitude;
 
 			float xUnit = dx / magnitude;

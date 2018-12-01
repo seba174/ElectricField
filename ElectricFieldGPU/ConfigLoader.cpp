@@ -17,6 +17,7 @@ void ConfigLoader::LoadConfig()
 	electricForceCoefficient = GetElectricForceCoefficient();
 	blockSize = GetBlockSize();
 	isGpuModeEnabled = GetGpuModeEnabled();
+	maxChargesInOneThreadRun = GetMaxChargesInOneThreadRun();
 }
 
 int ConfigLoader::GetWidth() const
@@ -121,6 +122,21 @@ int ConfigLoader::GetMaxVelocity() const
 	catch (...)
 	{
 		return DefaultMaxVelocity;
+	}
+}
+
+int ConfigLoader::GetMaxChargesInOneThreadRun() const
+{
+	std::string maxChargesInComputation = configLoader.getValue(GroupName, MaxChargesInOneThreadRun);
+	if (maxChargesInComputation.empty())
+		return DefaultMaxChargesInOneThreadRun;
+	try
+	{
+		return std::stoi(maxChargesInComputation);
+	}
+	catch (...)
+	{
+		return DefaultMaxChargesInOneThreadRun;
 	}
 }
 

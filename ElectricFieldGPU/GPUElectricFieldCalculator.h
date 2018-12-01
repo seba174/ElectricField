@@ -10,13 +10,14 @@ private:
 	int* xCoordinates_device;
 	int* yCoordinates_device;
 	int baseElectricForceMultiplier;
+	int maxChargesInOneThreadRun;
 	int width;
 	int height;
 	int blockSize;
 
 public:
 
-	GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier);
+	GPUElectricFieldCalculator(ChargesManager& chargesManager, int blockSize, int baseElectricForceMultiplier, int maxChargesInOneThreadRun);
 
 	bool SetDevice(int id);
 

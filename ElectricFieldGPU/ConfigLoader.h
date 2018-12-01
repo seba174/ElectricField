@@ -8,6 +8,7 @@ private:
 	const std::string Width = "Width";
 	const std::string Height = "Height";
 	const std::string NumberOfCharges = "NumberOfCharges";
+	const std::string MaxChargesInOneThreadRun = "MaxChargesInOneThreadRun";
 	const std::string ElectricForceCoefficient = "ElectricForceCoefficient";
 	const std::string BlockSize = "BlockSize";
 	const std::string ChargeMinVelocity = "ChargeMinVelocity";
@@ -16,6 +17,7 @@ private:
 	const int DefaultWidth = 800;
 	const int DefaultHeight = 600;
 	const int DefaultNumberOfCharges = 50;
+	const int DefaultMaxChargesInOneThreadRun = 1024;
 	const float DefaultElectricForceCoefficient = 0.6f;
 	const int DefaultBlockSize = 512;
 	const int DefaultMinVelocity = 1;
@@ -31,6 +33,7 @@ public:
 	int width;
 	int height;
 	int numberOfCharges;
+	int maxChargesInOneThreadRun;
 	float electricForceCoefficient;
 	int blockSize;
 	bool isGpuModeEnabled;
@@ -46,5 +49,6 @@ public:
 	int GetBlockSize() const;
 	int GetMinVelocity() const;
 	int GetMaxVelocity() const;
+	int GetMaxChargesInOneThreadRun() const;
 	bool GetGpuModeEnabled() const;
 };
